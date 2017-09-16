@@ -52,4 +52,19 @@ public class Menu {
     public void setCheeses(List<Cheese> cheeses) {
         this.cheeses = cheeses;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Menu menu = (Menu) o;
+
+        return id == menu.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

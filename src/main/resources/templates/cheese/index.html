@@ -17,18 +17,28 @@
         <th>Name</th>
         <th>Description</th>
         <th>Category</th>
+        <th>Relevant Menus</th>
     </tr>
 
     <tr th:each="cheese : ${cheeses}">
         <td th:text="${cheese.name}"></td>
         <td th:text="${cheese.description}"></td>
         <td th:text="${cheese.category.name}"></td>
+        <td>
+            <ul th:each="menu : ${cheese.menus}">
+                <a th:href="@{'/menu/?id=' + ${menu.id}}"><li th:text="${menu.name}"></li></a>
+            </ul>
+        </td>
+        <td><a th:href="@{'/cheese/edit/?id=' + ${cheese.id}}">Edit this Cheese</a></td>
     </tr>
 
 </table>
 
 <a href="/cheese/add">Add</a> |
+<!--<a href="/cheese/edit">Edit</a> |-->
 <a href="/cheese/remove">Remove</a>
+
+<footer th:replace="fragments :: cake"></footer>
 
 </body>
 </html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<p th:unless="${cheeses} and ${cheeses.size()}">Fool, there aren't any cheeses</p>
+
+<form method="post" style="max-width:600px;" th:object="${cheese}">
+    <div class="form-group">
+        <select name="chosenCheese">
+            <option th:each="cheese : ${cheeses}"
+                    th:text="${cheese.name}"
+                    th:value="${cheese.id}"></option>
+        </select>
+    </div>
+    <input type="submit" value="Edit this Cheese" />
+</form>
+
+</body>
+</html>
