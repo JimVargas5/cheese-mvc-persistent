@@ -1,7 +1,9 @@
 package org.launchcode.controllers;
 
+import org.launchcode.models.Category;
 import org.launchcode.models.Cheese;
-import org.launchcode.models.CheeseType;
+import org.launchcode.models.Menu;
+import org.launchcode.models.data.CategoryDao;
 import org.launchcode.models.data.CheeseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by LaunchCode
@@ -22,7 +25,10 @@ import javax.validation.Valid;
 public class CheeseController {
 
     @Autowired
-    private CheeseDao cheeseDao;
+    CheeseDao cheeseDao;
+
+    @Autowired
+    CategoryDao categoryDao;
 
     // Request path: /cheese
     @RequestMapping(value = "")
@@ -38,19 +44,22 @@ public class CheeseController {
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
         model.addAttribute(new Cheese());
-        model.addAttribute("cheeseTypes", CheeseType.values());
+        model.addAttribute("categories", categoryDao.findAll());
         return "cheese/add";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm(@ModelAttribute  @Valid Cheese newCheese,
-                                       Errors errors, Model model) {
+    public String processAddCheeseForm(@ModelAttribute  @Valid Cheese newCheese, Errors errors,
+                                       @RequestParam int categoryId, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Cheese");
+            model.addAttribute("categories", categoryDao.findAll());
             return "cheese/add";
         }
 
+        Category aCategory = categoryDao.findOne(categoryId);
+        newCheese.setCategory(aCategory);
         cheeseDao.save(newCheese);
         return "redirect:";
     }
@@ -66,10 +75,25 @@ public class CheeseController {
     public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
 
         for (int cheeseId : cheeseIds) {
+            List<Menu> relevantMenus = cheeseDao.findOne(cheeseId).getMenus();
+            if (relevantMenus.size() > 0) {
+                for (Menu menu : relevantMenus) {
+                    menu.removeItem(cheeseDao.findOne(cheeseId));
+                }
+            }
             cheeseDao.delete(cheeseId);
         }
 
-        return "redirect:";
+        return "redirect:/cheese";
+    }
+
+    @RequestMapping(value= "category", method = RequestMethod.GET)
+    public String category(Model model, @RequestParam int id){
+        Category aCategory = categoryDao.findOne(id);
+        List<Cheese> cheeses = aCategory.getCheeses();
+        model.addAttribute("cheeses", cheeses);
+        model.addAttribute("title", "Cheeses in Category: "+aCategory.getName());
+        return "cheese/index";
     }
 
 }
