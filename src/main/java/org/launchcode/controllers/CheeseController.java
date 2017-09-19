@@ -106,15 +106,6 @@ public class CheeseController {
         return "redirect:/cheese";
     }
 
-    @RequestMapping(value= "category", method = RequestMethod.GET)
-    public String category(Model model, @RequestParam int id){
-        Category aCategory = categoryDao.findOne(id);
-        List<Cheese> cheeses = aCategory.getCheeses();
-        model.addAttribute("cheeses", cheeses);
-        model.addAttribute("title", "Cheeses in Category: "+aCategory.getName());
-        return "cheese/index";
-    }
-
     /*@RequestMapping(value= "edit-choose", method= RequestMethod.GET)
     public String chooseACheeseToEdit(Model model){
         model.addAttribute("title", "Choose a cheese to edit:");

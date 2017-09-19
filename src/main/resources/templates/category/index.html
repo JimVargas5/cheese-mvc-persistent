@@ -10,7 +10,7 @@
 <p th:unless="${categories} and ${categories.size()}">Fool, there aren't any categories.</p>
 <p><b>All of the Categories</b></p>
 <ul th:each="category : ${categories}">
-    <a th:href="@{'cheese/category/?id=' + ${category.id}}"><li th:text="${category.name}"></li></a>
+    <a th:href="@{'/category/view/?id=' + ${category.id}}"><li th:text="${category.name}"></li></a>
 </ul>
 <a href="category/add">Add a Category</a>
 

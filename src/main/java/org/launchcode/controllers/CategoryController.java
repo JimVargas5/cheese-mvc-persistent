@@ -1,6 +1,7 @@
 package org.launchcode.controllers;
 
 import org.launchcode.models.Category;
+import org.launchcode.models.Cheese;
 import org.launchcode.models.data.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,8 +10,10 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("category")
@@ -43,6 +46,15 @@ public class CategoryController {
         }
 
         categoryDao.save(newCategory);
-        return "redirect:";
+        return "redirect:/category/view/?id="+newCategory.getId();
+    }
+
+    @RequestMapping(value= "view", method = RequestMethod.GET)
+    public String viewOneCategory(Model model, @RequestParam int id){
+        Category aCategory = categoryDao.findOne(id);
+        List<Cheese> cheeses = aCategory.getCheeses();
+        model.addAttribute("cheeses", cheeses);
+        model.addAttribute("title", "Cheeses in Category: "+aCategory.getName());
+        return "cheese/index";
     }
 }
